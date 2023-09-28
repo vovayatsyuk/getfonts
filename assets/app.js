@@ -110,3 +110,13 @@ document.addEventListener('click', (e) => {
   }
   document.getElementById('url').value = e.target.dataset.fontUrl;
 });
+
+document.addEventListener('alpine:init', () => {
+  Alpine.data('fallback', () => ({
+    init() {
+      console.log('hello');
+    },
+  }));
+});
+
+Alpine.start();
