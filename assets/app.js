@@ -1,20 +1,5 @@
 import { downloadZip } from './zip.js';
-
-async function fetchCss(url) {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw 'Unable to fetch requested URL';
-  }
-
-  const contentType = response.headers.get('content-type');
-
-  if (contentType.indexOf('text/css;') !== 0) {
-    throw 'The requested URL does not return CSS response';
-  }
-
-  return response.text();
-}
+import { convertShareToCssUrl, fetchCss } from './helpers.js';
 
 async function download(url) {
   const files = [];
@@ -54,22 +39,6 @@ async function download(url) {
   }, 10000);
 }
 
-function prepareUrl(url) {
-  const share = 'https://fonts.google.com/share?selection.family=';
-
-  if (url.indexOf(share) !== 0) {
-    return url;
-  }
-
-  const fonts = url
-    .replace(share, '')
-    .replaceAll('%20', '+')
-    .split('%7C')
-    .join('&family=');
-
-  return `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`;
-}
-
 function showError(text) {
   document.getElementById('errorText').innerText = text;
   document.getElementById('error').style.display = '';
@@ -95,7 +64,7 @@ document.getElementById('form').addEventListener('submit', (e) => {
 
   loader.show();
 
-  download(prepareUrl(document.getElementById('url').value))
+  download(convertShareToCssUrl(document.getElementById('url').value))
     .catch((e) => {
       showError(e);
     })
@@ -110,13 +79,3 @@ document.addEventListener('click', (e) => {
   }
   document.getElementById('url').value = e.target.dataset.fontUrl;
 });
-
-document.addEventListener('alpine:init', () => {
-  Alpine.data('fallback', () => ({
-    init() {
-      console.log('hello');
-    },
-  }));
-});
-
-Alpine.start();

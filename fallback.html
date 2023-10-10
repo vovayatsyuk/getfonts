@@ -11,8 +11,8 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="preload" href="/assets/fonts/CabinetGrotesk.woff2" as="font" type="font/woff2" crossorigin/>
   <link rel="stylesheet" type="text/css" href="/assets/styles.css"/>
+  <script type="module" src="/assets/fallback.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script type="module" src="/assets/app.js"></script>
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@vovayatsyuk">
   <meta name="twitter:title" content="Getfonts / Fallback - Fallback font calculator">
@@ -33,7 +33,7 @@
         <h1 class="font-grotesk text-3xl leading-[2.5rem] sm:text-5xl sm:leading-[3.5rem] 2xl:text-6xl 2xl:leading-[4rem] md:w-1/2">Eliminate layout shifts caused by font swapping</h1>
         <form class="bg-white text-slate-800 p-8 2xl:p-10 rounded-xl shadow-xl absolute -left-6 -right-6 md:left-[52%] md:right-4 mt-6 md:mt-0 2xl:-mt-2 flex flex-col" id="form">
           <div class="relative">
-            <input class="w-full border border-slate-200 rounded-lg p-4 pr-11 shadow-[0_3px_10px_0px_rgb(0_0_0_/_5%)]" required autocomplete="off" type="url" id="url" placeholder="Paste webfont URL here..."/>
+            <input x-model="url" class="w-full border border-slate-200 rounded-lg p-4 pr-11 shadow-[0_3px_10px_0px_rgb(0_0_0_/_5%)]" required autocomplete="off" type="url" id="url" placeholder="Paste webfont URL here..."/>
             <button class="text-slate-400 !absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer focus:outline-none focus:ring-2 ring-blue-600 rounded-full bg-white" type="button" aria-label="Link to the CSS file or Google's share link." data-microtip-position="top-left" role="tooltip">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" title="">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
@@ -53,7 +53,7 @@
             </button>
           </p>
 
-          <button class="relative bg-blue-600 hover:bg-blue-700 text-white text-sm leading-6 font-semibold uppercase w-full rounded-lg p-4 mt-5 transition focus:outline-none focus:ring-2 ring-blue-600 ring-offset-2" type="submit">
+          <button @click="processUrl" class="relative bg-blue-600 hover:bg-blue-700 text-white text-sm leading-6 font-semibold uppercase w-full rounded-lg p-4 mt-5 transition focus:outline-none focus:ring-2 ring-blue-600 ring-offset-2" type="button">
             <span class="transition">Proceed</span>
             <svg id="loader" class="absolute w-6 h-6 top-1/2 left-1/2 -ml-3 -mt-3 animate-spin pointer-events-none opacity-0 transition" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -62,8 +62,8 @@
 
           <p class="text-slate-500 my-3">Or, try one of the examples:</p>
           <ul class="flex gap-2 flex-wrap">
-            <li><button class="py-1 px-3 border rounded text-slate-700 hover:bg-slate-50" type="button" data-font-url="https://fonts.google.com/share?selection.family=Inter:wght@300;400;500;600;700;800">Inter</button></li>
-            <li><button class="py-1 px-3 border rounded text-slate-700 hover:bg-slate-50" type="button" data-font-url="https://fonts.google.com/share?selection.family=Barlow%20Semi%20Condensed:wght@400;500;600;700%7CMukta:wght@400;600;700">Barlow and Mukta</button></li>
+            <li><button class="py-1 px-3 border rounded text-slate-700 hover:bg-slate-50" type="button" @click="url = 'https://fonts.google.com/share?selection.family=Inter:wght@300;400;500;600;700;800'">Inter</button></li>
+            <li><button class="py-1 px-3 border rounded text-slate-700 hover:bg-slate-50" type="button" @click="url = 'https://fonts.google.com/share?selection.family=Barlow%20Semi%20Condensed:wght@400;500;600;700%7CMukta:wght@400;600;700'">Barlow and Mukta</button></li>
           </ul>
         </form>
       </div>
@@ -72,7 +72,7 @@
     </div>
   </main>
 
-  <section class="mx-auto max-w-5xl mt-44 md:mt-28">
+  <section x-show="!showApp" class="mx-auto max-w-5xl mt-44 md:mt-28">
     <h2 class="text-center font-grotesk text-6xl leading-[3.5rem]">How use this site?</h2>
     <div class="mt-16 grid md:grid-cols-3 gap-8 text-center md:text-left">
       <div class="rounded-[3rem] bg-amber-200 p-10 pt-20 relative overflow-hidden text-lg bg-gradient-to-br from-amber-200 to-amber-300/80">
@@ -117,9 +117,14 @@
     </div>
   </section>
 
-  <div class="flex w-full max-w-7xl mx-auto">
+  <div x-show="showApp" class="flex w-full max-w-7xl mx-auto">
     <main class="prose prose-lg max-w-none flex-grow w-full relative">
-      <div data-content data-contenteditable class="p-4 pt-8 absolute top-0 left-0">
+      <div data-content data-contenteditable class="p-4 pt-8 absolute top-0 left-0"
+        :style="{
+          'font-family': primary.fontFamily,
+          'font-weight': primary.fontWeight,
+          'font-style': primary.fontStyle,
+        }">
         <h1>Fallback font using local fonts</h1>
         <h2>Fallback font using local fonts</h2>
         <h3>Fallback font using local fonts</h3>
@@ -148,32 +153,23 @@
     <aside class="w-96 ml-auto shrink-0 border-l p-4 pb-8">
       <div class="space-y-5">
         <div>
-          <label for="about" class="block text-sm font-medium leading-6 text-gray-900">
-            Webfont CSS URL
-          </label>
-          <div class="mt-1">
-            <input value="https://fonts.google.com/share?selection.family=Inter:wght@400;500;600;700" type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-          </div>
-          <!-- https://fonts.google.com/share?selection.family=Inter:wght@400;500;600;700%7CRoboto%2BCondensed:wght@300 -->
-          <!-- https://fonts.google.com/share?selection.family=Inter:wght@400;500;600;700%7CRoboto:wght@300 -->
-          <!-- https://fonts.google.com/share?selection.family=Inter:wght@400;500;600;700 -->
-        </div>
-        <div>
-          <label for="about" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="primary-font" class="block text-sm font-medium leading-6 text-gray-900">
             Primary font-family
           </label>
           <div class="mt-1">
-            <input type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+            <select x-model="primary.fontFamily" id="primary-font" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+              <template x-for="family in webfonts">
+                  <option x-text="family"></option>
+              </template>
+            </select>
           </div>
-          <!-- https://fonts.google.com/share?selection.family=Inter:wght@400;500;600;700%7CRoboto:wght@300 -->
-          <!-- https://fonts.google.com/share?selection.family=Inter:wght@400;500;600;700 -->
         </div>
         <div>
           <label for="fallback" class="block text-sm font-medium leading-6 text-gray-900">
             Fallback font-family
           </label>
           <div class="mt-1">
-            <select id="fallback" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <select id="fallback" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
               <optgroup label="Sans-Serif">
                 <option>Arial (Win, Mac)</option>
                 <option>Helvetica (Mac)</option>
@@ -194,7 +190,7 @@
             Font-Weight
           </label>
           <div class="mt-1">
-            <input type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+            <input type="text" id="primary" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6"/>
           </div>
         </div>
         <div>
@@ -202,7 +198,7 @@
             Size-Adjust
           </label>
           <div class="mt-1">
-            <input type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+            <input type="text" id="primary" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6"/>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -211,7 +207,7 @@
               Ascent-Override
             </label>
             <div class="mt-1">
-              <input type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+              <input type="text" id="primary" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6"/>
             </div>
           </div>
           <div>
@@ -219,7 +215,7 @@
               Descent-Override
             </label>
             <div class="mt-1">
-              <input type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+              <input type="text" id="primary" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6"/>
             </div>
           </div>
         </div>
@@ -228,7 +224,7 @@
             Line-Gap-Override
           </label>
           <div class="mt-1">
-            <input type="text" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+            <input type="text" id="primary" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6"/>
           </div>
         </div>
         <div>
@@ -236,7 +232,7 @@
             CSS
           </label>
           <div class="mt-1">
-            <textarea rows="5" id="primary" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
+            <textarea rows="5" id="primary" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6"></textarea>
           </div>
         </div>
       </div>
