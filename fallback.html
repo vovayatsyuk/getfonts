@@ -118,70 +118,80 @@
   </section>
 
   <div x-show="showApp" class="flex w-full max-w-7xl mx-auto">
-    <main class="prose prose-lg max-w-none flex-grow w-full relative">
-      <div data-content data-contenteditable class="p-4 pt-8 absolute top-0 left-0"
-        :style="{
-          'font-family': primary.fontFamily,
-          'font-weight': primary.fontWeight,
-          'font-style': primary.fontStyle,
-        }">
-        <h1>Fallback font using local fonts</h1>
-        <h2>Fallback font using local fonts</h2>
-        <h3>Fallback font using local fonts</h3>
-        <hr>
-        <p>
-          This tool helps to pick proper <a href="">size-adjust</a>,
-          <a href="">ascent-override</a>, <a href="">descent-override</a>,
-          and <a href="">line-gap-override</a> values to closely match selected
-          webfont.
-        </p>
-        <!-- <p>Please follow the steps below:</p>
-        <ol>
-          <li>Choose the primary font you want to use.</li>
-          <li>Choose fallback font. It should match your primary font as closely as possible.</li>
-          <li>Use size-adjust to match horizontal size of the text.</li>
-          <li>Use descent-override so the descent part of fallback font will match the primary font.</li>
-          <li>Use ascent-override so the ascent part of fallback font will match the primary font.</li>
-        </ol> -->
-        <p>
-          Please read the <a href="https://developer.chrome.com/blog/font-fallbacks/" target="_blank" rel="noopener">Improved font fallbacks</a>
-          article by <a href="https://twitter.com/katiehempenius" target="_blank" rel="noopener">@katiehempenius</a>.
-        </p>
+    <main class="flex-grow w-full flex flex-col">
+      <div class="flex gap-2 justify-center">
+        <select x-model="primary.fontFamily" id="primary-font" class="block w-56 border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+          <template x-for="(family, i) in Object.keys(webfonts)">
+            <option x-text="family"></option>
+          </template>
+        </select>
+        <div class="relative rounded-md shadow-sm w-16">
+          <input x-model="primary.fontSize" type="text" class="block w-full border-gray-300 rounded-md py-1.5 pr-6 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            <span class="text-gray-500 sm:text-sm">px</span>
+          </div>
+        </div>
+        <select x-model="primary.fontWeight" x-show="webfonts[primary.fontFamily]?.weights.length > 1" id="primary-font" class="block w-20 border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+          <template x-for="weight in webfonts[primary.fontFamily]?.weights">
+            <option x-text="weight"></option>
+          </template>
+        </select>
+        <select x-model="primary.fontStyle" x-show="webfonts[primary.fontFamily]?.styles.length > 1" id="primary-font" class="block w-28 border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+          <template x-for="style in webfonts[primary.fontFamily]?.styles">
+            <option x-text="style"></option>
+          </template>
+        </select>
+      </div>
+
+      <div class="relative h-full overflow-auto">
+        <div data-content class="p-4 pt-8 w-full absolute top-0 left-0 group">
+          <div contenteditable class="resize-none group-hover:resize p-16 w-full bg-transparent border-0 rounded-md text-pink-500/50 overflow-hidden mx-auto ring-1 ring-inset ring-transparent group-hover:ring-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:!ring-blue-600"
+            :style="{
+              'font-family': primary.fontFamily,
+              'font-weight': primary.fontWeight,
+              'font-style': primary.fontStyle,
+              'font-size': primary.fontSize + 'px',
+              'padding': primary.fontSize / 2 + 'px',
+            }"
+            x-text="text"
+            x-ref="primaryContent"></div>
+        </div>
+        <div data-content class="p-4 pt-8 w-full absolute top-0 left-0 group">
+          <div contenteditable class="resize-none group-hover:resize p-16 w-full bg-transparent border-0 rounded-md text-blue-500/70 overflow-hidden mx-auto ring-1 ring-inset ring-transparent group-hover:ring-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:!ring-blue-600"
+            :style="{
+              'font-family': fallback.fontFamily,
+              'font-weight': fallback.fontWeight,
+              'font-style': primary.fontStyle,
+              'font-size': primary.fontSize + 'px',
+              'padding': primary.fontSize / 2 + 'px',
+            }"
+            x-text="text"
+            x-ref="fallbackContent"
+            @input="text = $event.target.textContent"></div>
+        </div>
       </div>
     </main>
 
+    <!-- <p>
+      Please read the <a href="https://developer.chrome.com/blog/font-fallbacks/" target="_blank" rel="noopener">Improved font fallbacks</a>
+      article by <a href="https://twitter.com/katiehempenius" target="_blank" rel="noopener">@katiehempenius</a>.
+    </p> -->
+
     <aside class="w-96 ml-auto shrink-0 border-l p-4 pb-8">
       <div class="space-y-5">
-        <div>
-          <label for="primary-font" class="block text-sm font-medium leading-6 text-gray-900">
-            Primary font-family
-          </label>
-          <div class="mt-1">
-            <select x-model="primary.fontFamily" id="primary-font" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
-              <template x-for="family in webfonts">
-                  <option x-text="family"></option>
-              </template>
-            </select>
-          </div>
-        </div>
         <div>
           <label for="fallback" class="block text-sm font-medium leading-6 text-gray-900">
             Fallback font-family
           </label>
           <div class="mt-1">
-            <select id="fallback" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
-              <optgroup label="Sans-Serif">
-                <option>Arial (Win, Mac)</option>
-                <option>Helvetica (Mac)</option>
-                <option>Liberation Sans (Ubuntu)</option>
-                <option>Tahoma (Win, Mac)</option>
-              </optgroup>
-              <optgroup label="Serif">
-                <option>Baskerville (Mac)</option>
-                <option>Hoefler Text (Mac)</option>
-                <option>Times New Roman (Win, Mac?)</option>
-                <option>Liberation Serif (Ubuntu)</option>
-              </optgroup>
+            <select x-model="fallback.fontFamily" id="fallback" class="block w-full border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
+              <template x-for="(families, typeface) in fallbacks">
+                <optgroup :label="typeface" :key="typeface">
+                  <template x-for="(label, value) in families" :key="value">
+                    <option :value="value" x-text="label"></option>
+                  </template>
+                </optgroup>
+              </template>
             </select>
           </div>
         </div>
