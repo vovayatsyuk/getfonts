@@ -30,7 +30,7 @@
   <main class="min-h-[60vh] 2xl:min-h-[70vh] flex items-center">
     <div class="relative py-12 px-10 pb-56 sm:p-16 sm:pb-48 md:pb-16 mx-auto max-w-5xl 2xl:max-w-6xl rounded-[4rem] text-white bg-blue-500 bg-gradient-to-tr from-blue-600/50 via-blue-700/50 to-blue-700/50">
       <div class="md:flex relative z-10">
-        <h1 class="font-grotesk text-3xl leading-[2.5rem] sm:text-5xl sm:leading-[3.5rem] 2xl:text-6xl 2xl:leading-[4rem] md:w-1/2">Eliminate layout shifts caused by font swapping</h1>
+        <h1 class="font-grotesk text-3xl leading-[2.5rem] sm:text-5xl sm:leading-[3.5rem] 2xl:text-6xl 2xl:leading-[4rem] md:w-1/2">Eliminate layout shifts caused by font loading</h1>
         <form class="bg-white text-slate-800 p-8 2xl:p-10 rounded-xl shadow-xl absolute -left-6 -right-6 md:left-[52%] md:right-4 mt-6 md:mt-0 2xl:-mt-2 flex flex-col" id="form">
           <div class="relative">
             <input x-model="url" class="w-full border border-slate-200 rounded-lg p-4 pr-11 shadow-[0_3px_10px_0px_rgb(0_0_0_/_5%)]" required autocomplete="off" type="url" id="url" placeholder="Paste webfont URL here..."/>
@@ -117,7 +117,7 @@
     </div>
   </section>
 
-  <div x-show="showApp" class="flex w-full max-w-7xl mx-auto">
+  <div x-show="showApp" class="flex w-full max-w-7xl mx-auto mt-20">
     <main class="flex-grow w-full flex flex-col">
       <div class="flex gap-2 justify-center">
         <select x-model="primary.fontFamily" id="primary-font" class="block w-56 border-gray-300 rounded-md py-1.5 text-gray-900 shadow-sm sm:text-sm sm:leading-6">
@@ -145,7 +145,7 @@
 
       <div class="relative h-full overflow-auto">
         <div data-content class="p-4 pt-8 w-full absolute top-0 left-0 group">
-          <div contenteditable class="resize-none group-hover:resize p-16 w-full bg-transparent border-0 rounded-md text-pink-500/50 overflow-hidden mx-auto ring-1 ring-inset ring-transparent group-hover:ring-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:!ring-blue-600"
+          <div class="resize-none group-hover:resize p-16 w-full bg-transparent border-0 rounded-md text-pink-500/50 overflow-hidden mx-auto ring-1 ring-inset ring-transparent group-hover:ring-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:!ring-blue-600"
             :style="{
               'font-family': primary.fontFamily,
               'font-weight': primary.fontWeight,
