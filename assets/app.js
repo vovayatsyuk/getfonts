@@ -64,7 +64,8 @@ function prepareUrl(url) {
   const fonts = url
     .replace(share, '')
     .replaceAll('%20', '+')
-    .split('%7C')
+    .replaceAll('%7C', '|')
+    .split('|')
     .join('&family=');
 
   return `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`;
